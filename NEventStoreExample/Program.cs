@@ -12,52 +12,52 @@ using NEventStoreExample.Infrastructure;
 
 namespace NEventStoreExample
 {
-    public class Program
+  public class Program
+  {
+    private static readonly Guid AggregateId = Guid.NewGuid();
+
+    private static IStoreEvents store;
+
+    public static void Main(string[] args)
     {
-        private static readonly Guid AggregateId = Guid.NewGuid();
+      var bus = BusSetup.StartWith<Conservative>()
+          .Apply<FlexibleSubscribeAdapter>(a =>
+          {
+            a.ByInterface(typeof(IEventHandler<>));
+            a.ByInterface(typeof(ICommandHandler<>));
+          }).Construct();
 
-        private static IStoreEvents store;
+      var someAwesomeUi = new SomeAwesomeUi(bus);
 
-        public static void Main(string[] args)
-        {
-            var bus = BusSetup.StartWith<Conservative>()
-                .Apply<FlexibleSubscribeAdapter>(a => 
-                {
-                    a.ByInterface(typeof(IEventHandler<>));
-                    a.ByInterface(typeof(ICommandHandler<>)); 
-                }).Construct();
+      using (store = WireupEventStore(bus))
+      {
+        var repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
 
-            var someAwesomeUi = new SomeAwesomeUi(bus);
+        var handler = new CreateAccountCommandHandler(repository);
+        var handler2 = new CloseAccountCommandHandler(repository);
+        bus.Subscribe(handler);
+        bus.Subscribe(handler2);
+        bus.Subscribe(new KaChingNotifier());
+        bus.Subscribe(new OmgSadnessNotifier());
 
-            using (store = WireupEventStore(bus))
-            {
-                var repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
+        someAwesomeUi.CreateNewAccount(AggregateId, "Luiz", "@luizdamim");
+        someAwesomeUi.CloseAccount(AggregateId);
+      }
 
-                var handler = new CreateAccountCommandHandler(repository);
-                var handler2 = new CloseAccountCommandHandler(repository);
-                bus.Subscribe(handler);
-                bus.Subscribe(handler2);
-                bus.Subscribe(new KaChingNotifier());
-                bus.Subscribe(new OmgSadnessNotifier());
-
-                someAwesomeUi.CreateNewAccount(AggregateId, "Luiz", "@luizdamim");
-                someAwesomeUi.CloseAccount(AggregateId);               
-            }
-
-            Console.ReadLine();
-        }
-
-        private static IStoreEvents WireupEventStore(IBus bus)
-        {
-            return Wireup.Init()
-                ////.LogToOutputWindow()
-                ////.LogToConsoleWindow()
-                .UsingInMemoryPersistence()
-                    .UsingJsonSerialization()
-                        .Compress()
-                .UsingSynchronousDispatchScheduler()
-                .DispatchTo(new DelegateMessageDispatcher(c => DelegateDispatcher.DispatchCommit(bus, c)))
-                .Build();
-        }
+      Console.ReadLine();
     }
+
+    private static IStoreEvents WireupEventStore(IBus bus)
+    {
+      return Wireup.Init()
+        ////.LogToOutputWindow()
+        ////.LogToConsoleWindow()
+          .UsingInMemoryPersistence()
+              .UsingJsonSerialization()
+                  .Compress()
+          .UsingSynchronousDispatchScheduler()
+          .DispatchTo(new DelegateMessageDispatcher(c => DelegateDispatcher.DispatchCommit(bus, c)))
+          .Build();
+    }
+  }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using CommonDomain;
+using CommonDomain.Core;
 using CommonDomain.Persistence;
 using NEventStoreExample.Command;
 using NEventStoreExample.Infrastructure;

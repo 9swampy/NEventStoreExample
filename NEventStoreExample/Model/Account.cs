@@ -20,6 +20,7 @@ namespace NEventStoreExample.Model
         private Account(Guid id)
         {
             Id = new AccountId(id);
+            base.Id = id;
         }
 
         public new AccountId Id { get; private set; }
