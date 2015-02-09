@@ -7,3 +7,5 @@ Simple [NEventStore](https://github.com/NEventStore/NEventStore) implementation 
 - http://pastebin.com/upZS72W0
 
 The `EventSpecification` test was heavily inspired by [Greg Young's Assert.That(We.Understand)](https://skillsmatter.com/skillscasts/1947-talk-from-greg-young) skillcast.
+
+I've also added EventualConsistencyTests replacing calls to deprecated SynchronousDispatch functionality using @larsw suggestion on https://github.com/NEventStore/NEventStore/issues/360#issuecomment-73605457
