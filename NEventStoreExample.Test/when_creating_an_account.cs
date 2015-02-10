@@ -8,29 +8,29 @@ using NUnit.Framework;
 
 namespace NEventStoreExample.Test
 {
-    [TestFixture]
-    public class when_creating_an_account : EventSpecification<CreateAccountCommand>
+  [TestFixture]
+  public class when_creating_an_account : EventSpecification<CreateAccountCommand>
+  {
+    private readonly Guid accountId = Guid.NewGuid();
+
+    protected override IEnumerable<IEvent> Given()
     {
-        private readonly Guid accountId = Guid.NewGuid();
-
-        protected override IEnumerable<IEvent> Given()
-        {
-            yield break;
-        }
-
-        protected override CreateAccountCommand When()
-        {
-            return new CreateAccountCommand(accountId, "Luiz Damim", "@luizdamim");
-        }
-
-        protected override ICommandHandler<CreateAccountCommand> OnHandler()
-        {
-            return new CreateAccountCommandHandler(Repository);
-        }
-
-        protected override IEnumerable<IEvent> Expect()
-        {
-            yield return new AccountCreatedEvent(accountId, "Luiz Damim", "@luizdamim", true);
-        }
+      yield break;
     }
+
+    protected override CreateAccountCommand When()
+    {
+      return new CreateAccountCommand(this.accountId, "Luiz Damim", "@luizdamim");
+    }
+
+    protected override ICommandHandler<CreateAccountCommand> OnHandler()
+    {
+      return new CreateAccountCommandHandler(this.Repository);
+    }
+
+    protected override IEnumerable<IEvent> Expect()
+    {
+      yield return new AccountCreatedEvent(this.accountId, "Luiz Damim", "@luizdamim", true);
+    }
+  }
 }

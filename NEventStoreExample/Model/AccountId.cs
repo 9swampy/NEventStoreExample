@@ -2,13 +2,13 @@
 
 namespace NEventStoreExample.Model
 {
-    public class AccountId
+  public class AccountId
+  {
+    public AccountId(Guid value)
     {
-        public AccountId(Guid value)
-        {
-            Value = value;
-        }
-        
-        public Guid Value { get; private set; }
+      this.Value = value;
     }
+        
+    public Guid Value { get; private set; }
+  }
 }

@@ -21,7 +21,7 @@ namespace NEventStoreExample.Test.EventualConsistency
     {
       foreach (var @event in commit.Events)
       {
-        bus.Publish(@event.Body);
+        this.bus.Publish(@event.Body);
       }
     }
 

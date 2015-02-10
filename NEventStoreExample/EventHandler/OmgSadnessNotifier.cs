@@ -4,11 +4,11 @@ using NEventStoreExample.Infrastructure;
 
 namespace NEventStoreExample.EventHandler
 {
-    public class OmgSadnessNotifier : IEventHandler<AccountClosedEvent>
+  public class OmgSadnessNotifier : IEventHandler<AccountClosedEvent>
+  {
+    public void Handle(AccountClosedEvent e)
     {
-        public void Handle(AccountClosedEvent e)
-        {
-            Console.WriteLine("Dude, we lost a customer... start the layoffs :(");
-        }
+      Console.WriteLine("Dude, we lost a customer... start the layoffs :(");
     }
+  }
 }

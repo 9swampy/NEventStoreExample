@@ -21,11 +21,12 @@ namespace NEventStoreExample
     public static void Main(string[] args)
     {
       var bus = BusSetup.StartWith<Conservative>()
-          .Apply<FlexibleSubscribeAdapter>(a =>
-          {
-            a.ByInterface(typeof(IEventHandler<>));
-            a.ByInterface(typeof(ICommandHandler<>));
-          }).Construct();
+                        .Apply<FlexibleSubscribeAdapter>(a =>
+                        {
+                          a.ByInterface(typeof(IEventHandler<>));
+                          a.ByInterface(typeof(ICommandHandler<>));
+                        })
+                        .Construct();
 
       var someAwesomeUi = new SomeAwesomeUi(bus);
 
@@ -50,14 +51,14 @@ namespace NEventStoreExample
     private static IStoreEvents WireupEventStore(IBus bus)
     {
       return Wireup.Init()
-        ////.LogToOutputWindow()
-        ////.LogToConsoleWindow()
-          .UsingInMemoryPersistence()
-              .UsingJsonSerialization()
-                  .Compress()
-          .UsingSynchronousDispatchScheduler()
-          .DispatchTo(new DelegateMessageDispatcher(c => DelegateDispatcher.DispatchCommit(bus, c)))
-          .Build();
+      ////.LogToOutputWindow()
+      ////.LogToConsoleWindow()
+                   .UsingInMemoryPersistence()
+                   .UsingJsonSerialization()
+                   .Compress()
+                   .UsingSynchronousDispatchScheduler()
+                   .DispatchTo(new DelegateMessageDispatcher(c => DelegateDispatcher.DispatchCommit(bus, c)))
+                   .Build();
     }
   }
 }

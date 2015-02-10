@@ -27,12 +27,12 @@
     public static void ClassInitialise(TestContext context)
     {
       bus = BusSetup.StartWith<Conservative>()
-          .Apply<FlexibleSubscribeAdapter>(a =>
-          {
-            a.ByInterface(typeof(IEventHandler<>));
-            a.ByInterface(typeof(ICommandHandler<>));
-          })
-          .Construct();
+                    .Apply<FlexibleSubscribeAdapter>(a =>
+                    {
+                      a.ByInterface(typeof(IEventHandler<>));
+                      a.ByInterface(typeof(ICommandHandler<>));
+                    })
+                    .Construct();
 
       client = new SomeAwesomeUi(bus);
     }
@@ -95,8 +95,9 @@
     [TestMethod]
     public async Task CreateAccountEventIsPublishedToBus()
     {
-      var store = Wireup.Init().UsingInMemoryPersistence()
-                      .Build();
+      var store = Wireup.Init()
+                        .UsingInMemoryPersistence()
+                        .Build();
 
       var repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
       var handler = new CreateAccountCommandHandler(repository);
@@ -136,8 +137,9 @@
     [TestMethod]
     public async Task DeactivingAccountDoesntRetriggerInitialCreate()
     {
-      var store = Wireup.Init().UsingInMemoryPersistence()
-                      .Build();
+      var store = Wireup.Init()
+                        .UsingInMemoryPersistence()
+                        .Build();
 
       var createHandler = new CreateAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
       var deactivateHandler = new CloseAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
@@ -167,7 +169,7 @@
           DateTime timeoutEnd = DateTime.Now.AddSeconds(10);
           while ((denormalizer.AccountName != name ||
                   denormalizer.IsActive) &&
-                  DateTime.Now < timeoutEnd)
+                 DateTime.Now < timeoutEnd)
           {
             await Task.Delay(100);
           }
@@ -182,8 +184,9 @@
     [TestMethod]
     public async Task TyingItTogether()
     {
-      var store = Wireup.Init().UsingInMemoryPersistence()
-                      .Build();
+      var store = Wireup.Init()
+                        .UsingInMemoryPersistence()
+                        .Build();
 
       var createHandler = new CreateAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
       var deactivateHandler = new CloseAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
@@ -216,7 +219,7 @@
           DateTime timeoutEnd = DateTime.Now.AddSeconds(10);
           while ((denormalizer.AccountName != name ||
                   denormalizer.IsActive) &&
-                  DateTime.Now < timeoutEnd)
+                 DateTime.Now < timeoutEnd)
           {
             await Task.Delay(100);
           }

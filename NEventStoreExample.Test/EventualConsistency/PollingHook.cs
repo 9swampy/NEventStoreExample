@@ -5,17 +5,17 @@ namespace NEventStoreExample.Test.EventualConsistency
 
   internal class PollingHook : PipelineHookBase
   {
-    private readonly IObserveCommits _commitsObserver;
+    private readonly IObserveCommits commitsObserver;
 
     public PollingHook(IObserveCommits commitsObserver)
     {
-      _commitsObserver = commitsObserver;
+      this.commitsObserver = commitsObserver;
     }
 
     public override void PostCommit(ICommit committed)
     {
       base.PostCommit(committed);
-      _commitsObserver.PollNow();
+      this.commitsObserver.PollNow();
     }
   }
 }

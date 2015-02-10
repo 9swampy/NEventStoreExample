@@ -8,29 +8,29 @@ using NUnit.Framework;
 
 namespace NEventStoreExample.Test
 {
-    [TestFixture]
-    public class when_closing_an_account : EventSpecification<CloseAccountCommand>
+  [TestFixture]
+  public class when_closing_an_account : EventSpecification<CloseAccountCommand>
+  {
+    private readonly Guid accountId = Guid.NewGuid();
+
+    protected override IEnumerable<IEvent> Given()
     {
-        private readonly Guid accountId = Guid.NewGuid();
-
-        protected override IEnumerable<IEvent> Given()
-        {
-            yield return new AccountCreatedEvent(accountId, "Luiz Damim", "@luizdamim", true);
-        }
-
-        protected override CloseAccountCommand When()
-        {
-            return new CloseAccountCommand(accountId);
-        }
-
-        protected override ICommandHandler<CloseAccountCommand> OnHandler()
-        {
-            return new CloseAccountCommandHandler(Repository);
-        }
-
-        protected override IEnumerable<IEvent> Expect()
-        {
-            yield return new AccountClosedEvent();
-        }
+      yield return new AccountCreatedEvent(this.accountId, "Luiz Damim", "@luizdamim", true);
     }
+
+    protected override CloseAccountCommand When()
+    {
+      return new CloseAccountCommand(this.accountId);
+    }
+
+    protected override ICommandHandler<CloseAccountCommand> OnHandler()
+    {
+      return new CloseAccountCommandHandler(this.Repository);
+    }
+
+    protected override IEnumerable<IEvent> Expect()
+    {
+      yield return new AccountClosedEvent();
+    }
+  }
 }
