@@ -4,6 +4,8 @@
   using System.Threading.Tasks;
   using CommonDomain.Core;
   using CommonDomain.Persistence.EventStore;
+  using FakeItEasy;
+  using FluentAssertions;
   using MemBus;
   using MemBus.Configurators;
   using MemBus.Subscribing;
@@ -11,16 +13,16 @@
   using NEventStore;
   using NEventStore.Client;
   using NEventStoreExample;
+  using NEventStoreExample.Command;
   using NEventStoreExample.CommandHandler;
   using NEventStoreExample.EventHandler;
   using NEventStoreExample.Infrastructure;
   using NEventStoreExample.Model;
-  using Shouldly;
 
   [TestClass]
   public class EventualConsistencyTests
   {
-    private static SomeAwesomeUi client;
+    private static ISomeAwesomeUi client;
     private static IBus bus;
 
     [ClassInitialize]
@@ -38,9 +40,22 @@
     }
 
     [TestMethod]
+    public void ShouldHaveInitialisedTheClient()
+    {
+      client.Should().NotBeNull();
+    }
+
+    [TestMethod]
+    public void ShouldHaveInitialisedTheBus()
+    {
+      bus.Should().NotBeNull();
+    }
+
+    [TestMethod]
     public void CanPublishCreateAccountCommand()
     {
-      Should.NotThrow(() => client.CreateNewAccount());
+      Action act = () => client.CreateNewAccount();
+      act.ShouldNotThrow();
     }
 
     [TestMethod]
@@ -51,11 +66,24 @@
 
       bus.Subscribe(handler);
 
-      Should.NotThrow(() => client.CreateNewAccount());
+      Action act = () => client.CreateNewAccount();
+
+      act.ShouldNotThrow();
     }
 
     [TestMethod]
     public void CreateAccountEventIsStored()
+    {
+      var store = Wireup.Init().UsingInMemoryPersistence().Build();
+      var repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
+      var handler = new CreateAccountCommandHandler(repository);
+      bus.Subscribe(handler);
+      var accountId = client.CreateNewAccount();
+      store.OpenStream(accountId, 0, int.MaxValue).CommittedEvents.Count.Should().Be(1);
+    }
+
+    [TestMethod]
+    public void CreateAccountEventIsStoredAndWhyBotherHavingTheEventHandlerInThisTest()
     {
       var store = Wireup.Init().UsingInMemoryPersistence().Build();
 
@@ -67,7 +95,7 @@
       bus.Subscribe(eventHandler);
       var accountId = client.CreateNewAccount();
 
-      store.OpenStream(accountId, 0, int.MaxValue).CommittedEvents.Count.ShouldBeGreaterThan(0);
+      store.OpenStream(accountId, 0, int.MaxValue).CommittedEvents.Count.Should().Be(1);
     }
 
     [TestMethod]
@@ -87,9 +115,9 @@
 
       Account account = repository.GetById<Account>(accountID);
 
-      account.ShouldNotBe(null);
-      account.Name.ShouldBe(name);
-      account.Twitter.ShouldBe(twitter);
+      account.Should().NotBeNull();
+      account.Name.Should().Be(name);
+      account.Twitter.Should().Be(twitter);
     }
 
     [TestMethod]
@@ -129,7 +157,7 @@
             await Task.Delay(100);
           }
 
-          denormalizer.AccountName.ShouldBe(name);
+          denormalizer.AccountName.Should().Be(name);
         }
       }
     }
@@ -174,9 +202,9 @@
             await Task.Delay(100);
           }
 
-          denormalizer.AccountName.ShouldBe(name);
-          denormalizer.IsActive.ShouldBe(false);
-          store.OpenStream(accountID, 0, int.MaxValue).CommittedEvents.Count.ShouldBe(2);
+          denormalizer.AccountName.Should().Be(name);
+          denormalizer.IsActive.Should().Be(false);
+          store.OpenStream(accountID, 0, int.MaxValue).CommittedEvents.Count.Should().Be(2);
         }
       }
     }
@@ -224,9 +252,9 @@
             await Task.Delay(100);
           }
 
-          denormalizer.AccountName.ShouldBe(name);
-          denormalizer.IsActive.ShouldBe(false);
-          store.OpenStream(accountID, 0, int.MaxValue).CommittedEvents.Count.ShouldBe(2);
+          denormalizer.AccountName.Should().Be(name);
+          denormalizer.IsActive.Should().Be(false);
+          store.OpenStream(accountID, 0, int.MaxValue).CommittedEvents.Count.Should().Be(2);
         }
       }
     }

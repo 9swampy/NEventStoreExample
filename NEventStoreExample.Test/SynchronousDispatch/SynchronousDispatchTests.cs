@@ -13,12 +13,12 @@
   using NEventStoreExample.EventHandler;
   using NEventStoreExample.Infrastructure;
   using NEventStoreExample.Model;
-  using Shouldly;
+  using FluentAssertions;
   using Xunit;
 
   public class SynchronousDispatchTests
   {
-    private readonly SomeAwesomeUi client;
+    private readonly ISomeAwesomeUi client;
     private readonly IBus bus;
 
     // Here, I'm wiring up my MemBus instance and telling it how to resolve my subscribers
@@ -42,7 +42,8 @@
     [Fact]
     public void CanPublishCreateAccountCommand()
     {
-      Should.NotThrow(() => this.client.CreateNewAccount());
+      Action act = () => this.client.CreateNewAccount();
+      act.ShouldNotThrow();
     }
 
     [Fact]
@@ -53,7 +54,9 @@
 
       this.bus.Subscribe(handler);
 
-      Should.NotThrow(() => this.client.CreateNewAccount());
+      Action act = () => this.client.CreateNewAccount();
+
+      act.ShouldNotThrow();
     }
 
     [Fact]
@@ -69,7 +72,7 @@
       this.bus.Subscribe(eventHandler);
       var accountId = this.client.CreateNewAccount();
 
-      store.OpenStream(accountId, 0, int.MaxValue).CommittedEvents.Count.ShouldBeGreaterThan(0);
+      store.OpenStream(accountId, 0, int.MaxValue).CommittedEvents.Count.Should().BeGreaterThan(0);
     }
 
     [Fact]
@@ -89,9 +92,9 @@
 
       Account account = repository.GetById<Account>(accountID);
 
-      account.ShouldNotBe(null);
-      account.Name.ShouldBe(name);
-      account.Twitter.ShouldBe(twitter);
+      account.Should().NotBeNull();
+      account.Name.Should().Be(name);
+      account.Twitter.Should().Be(twitter);
     }
 
     [Fact]
@@ -115,7 +118,7 @@
 
       this.client.CreateNewAccount(accountID, name, twitter);
 
-      denormalizer.AccountName.ShouldBe(name);
+      denormalizer.AccountName.Should().Be(name);
     }
 
     [Fact]
@@ -142,9 +145,9 @@
       this.client.CreateNewAccount(accountID, name, twitter);
       this.client.CloseAccount(accountID);
 
-      denormalizer.AccountName.ShouldBe(name);
-      denormalizer.IsActive.ShouldBe(false);
-      store.OpenStream(accountID, 0, int.MaxValue).CommittedEvents.Count.ShouldBe(2);
+      denormalizer.AccountName.Should().Be(name);
+      denormalizer.IsActive.Should().Be(false);
+      store.OpenStream(accountID, 0, int.MaxValue).CommittedEvents.Count.Should().Be(2);
     }
 
     //For fun, run this with the Debugger (eg, if using TDD.NET then right click on this method and select Test With -> Debugger.
@@ -176,9 +179,9 @@
       this.client.CreateNewAccount(accountID, name, twitter);
       this.client.CloseAccount(accountID);
 
-      denormalizer.AccountName.ShouldBe(name);
-      denormalizer.IsActive.ShouldBe(false);
-      store.OpenStream(accountID, 0, int.MaxValue).CommittedEvents.Count.ShouldBe(2);
+      denormalizer.AccountName.Should().Be(name);
+      denormalizer.IsActive.Should().Be(false);
+      store.OpenStream(accountID, 0, int.MaxValue).CommittedEvents.Count.Should().Be(2);
     }
   }
 }

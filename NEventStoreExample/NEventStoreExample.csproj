@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ISomeAwesomeUi.cs" />
     <Compile Include="Model\Account.cs" />
     <Compile Include="Event\AccountClosedEvent.cs" />
     <Compile Include="Event\AccountCreatedEvent.cs" />

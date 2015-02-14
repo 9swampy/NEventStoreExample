@@ -1,19 +1,16 @@
-﻿using System;
-using CommonDomain.Persistence;
-using MemBus;
-using NEventStoreExample.Command;
-
-namespace NEventStoreExample
+﻿namespace NEventStoreExample
 {
-  public class SomeAwesomeUi
+  using System;
+  using MemBus;
+  using NEventStoreExample.Command;
+
+  public class SomeAwesomeUi : NEventStoreExample.ISomeAwesomeUi
   {
     private readonly IBus bus;
-    private readonly IRepository repository;
 
     public SomeAwesomeUi(IBus bus)
     {
       this.bus = bus;
-      this.repository = this.repository;
     }
 
     public Guid CreateNewAccount()

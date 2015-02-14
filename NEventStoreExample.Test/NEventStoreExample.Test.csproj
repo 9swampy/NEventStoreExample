@@ -32,6 +32,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FakeItEasy">
+      <HintPath>..\packages\FakeItEasy.1.25.2\lib\net40\FakeItEasy.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentAssertions">
+      <HintPath>..\packages\FluentAssertions.3.2.2\lib\net45\FluentAssertions.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentAssertions.Core">
+      <HintPath>..\packages\FluentAssertions.3.2.2\lib\net45\FluentAssertions.Core.dll</HintPath>
+    </Reference>
     <Reference Include="KellermanSoftware.Compare-NET-Objects">
       <HintPath>..\packages\CompareObjects.1.0.2\lib\net35\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
     </Reference>
@@ -46,9 +55,6 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="Shouldly">
-      <HintPath>..\packages\Shouldly.2.4.0\lib\net40\Shouldly.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -61,6 +67,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventualConsistency\DomainModelCreatingAnAccount.cs" />
+    <Compile Include="SomeAwesomeUiTests.cs" />
     <Compile Include="EventualConsistency\EventualConsistencyTests.cs" />
     <Compile Include="SynchronousDispatch\SynchronousDispatchTests.cs" />
     <Compile Include="EventSpecification.cs" />
