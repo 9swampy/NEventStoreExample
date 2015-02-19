@@ -14,7 +14,7 @@ namespace NEventStoreExample
 {
   public class Program
   {
-    private static readonly Guid AggregateId = Guid.NewGuid();
+    private static readonly Guid aggregateId = Guid.NewGuid();
 
     private static IStoreEvents store;
 
@@ -41,8 +41,8 @@ namespace NEventStoreExample
         bus.Subscribe(new KaChingNotifier());
         bus.Subscribe(new OmgSadnessNotifier());
 
-        someAwesomeUi.CreateNewAccount(AggregateId, "Luiz", "@luizdamim");
-        someAwesomeUi.CloseAccount(AggregateId);
+        someAwesomeUi.CreateNewAccount(aggregateId, "Luiz", "@luizdamim");
+        someAwesomeUi.CloseAccount(aggregateId);
       }
 
       Console.ReadLine();

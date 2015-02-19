@@ -1,10 +1,13 @@
-﻿using System;
-using NEventStoreExample.Infrastructure;
-
-namespace NEventStoreExample.Event
+﻿namespace NEventStoreExample.Event
 {
+  using System;
+
   [Serializable]
-  public class AccountClosedEvent : IEvent
+  public class AccountClosedEvent : DomainEvent
   {
+    public AccountClosedEvent(Guid id, int version)
+      : base(id, version)
+    {
+    }
   }
 }

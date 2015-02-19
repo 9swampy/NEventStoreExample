@@ -70,6 +70,7 @@
     <Compile Include="EventualConsistency\DomainModelCreatingAnAccount.cs" />
     <Compile Include="SomeAwesomeUiTests.cs" />
     <Compile Include="EventualConsistency\EventualConsistencyTests.cs" />
+    <Compile Include="SomeAwesomeViewModelTests.cs" />
     <Compile Include="SynchronousDispatch\SynchronousDispatchTests.cs" />
     <Compile Include="EventSpecification.cs" />
     <Compile Include="EventualConsistency\MassTransitDispatcher.cs" />

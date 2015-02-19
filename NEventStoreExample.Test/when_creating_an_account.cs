@@ -13,7 +13,7 @@ namespace NEventStoreExample.Test
   {
     private readonly Guid accountId = Guid.NewGuid();
 
-    protected override IEnumerable<IEvent> Given()
+    protected override IEnumerable<IDomainEvent> Given()
     {
       yield break;
     }
@@ -28,9 +28,9 @@ namespace NEventStoreExample.Test
       return new CreateAccountCommandHandler(this.Repository);
     }
 
-    protected override IEnumerable<IEvent> Expect()
+    protected override IEnumerable<IDomainEvent> Expect()
     {
-      yield return new AccountCreatedEvent(this.accountId, "Luiz Damim", "@luizdamim", true);
+      yield return new AccountCreatedEvent(this.accountId, 0, "Luiz Damim", "@luizdamim", true);
     }
   }
 }

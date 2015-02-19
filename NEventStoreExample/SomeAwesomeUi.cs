@@ -2,15 +2,14 @@
 {
   using System;
   using MemBus;
-  using NEventStoreExample.Command;
 
-  public class SomeAwesomeUi : NEventStoreExample.ISomeAwesomeUi
+  public class SomeAwesomeUi : ISomeAwesomeUi
   {
-    private readonly IBus bus;
+    private readonly ISomeAwesomeViewModel someAwesomeViewModel;
 
     public SomeAwesomeUi(IBus bus)
     {
-      this.bus = bus;
+      this.someAwesomeViewModel = new SomeAwesomeViewModel(bus);
     }
 
     public Guid CreateNewAccount()
@@ -22,14 +21,16 @@
 
     public void CreateNewAccount(Guid accountId, string name, string twitter)
     {
-      var createCommand = new CreateAccountCommand(accountId, name, twitter);
-      this.bus.Publish(createCommand);
+      this.someAwesomeViewModel.AccountID = accountId;
+      this.someAwesomeViewModel.Name = name;
+      this.someAwesomeViewModel.Twitter = twitter;
+      this.someAwesomeViewModel.CreateNewAccount();
     }
 
     public void CloseAccount(Guid accountId)
     {
-      var closeCommand = new CloseAccountCommand(accountId);
-      this.bus.Publish(closeCommand);
+      this.someAwesomeViewModel.AccountID = accountId;
+      this.someAwesomeViewModel.CloseAccount();
     }
   }
 }

@@ -1,26 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using NEventStoreExample.Command;
-using NEventStoreExample.CommandHandler;
-using NEventStoreExample.Event;
-using NEventStoreExample.Infrastructure;
-using NUnit.Framework;
-
-namespace NEventStoreExample.Test
+﻿namespace NEventStoreExample.Test
 {
+  using System;
+  using System.Collections.Generic;
+  using NEventStoreExample.Command;
+  using NEventStoreExample.CommandHandler;
+  using NEventStoreExample.Event;
+  using NEventStoreExample.Infrastructure;
+  using NUnit.Framework;
+
   [TestFixture]
   public class when_closing_an_account : EventSpecification<CloseAccountCommand>
   {
     private readonly Guid accountId = Guid.NewGuid();
 
-    protected override IEnumerable<IEvent> Given()
+    protected override IEnumerable<IDomainEvent> Given()
     {
-      yield return new AccountCreatedEvent(this.accountId, "Luiz Damim", "@luizdamim", true);
+      yield return new AccountCreatedEvent(this.accountId, -1, "Luiz Damim", "@luizdamim", true);
     }
 
     protected override CloseAccountCommand When()
     {
-      return new CloseAccountCommand(this.accountId);
+      return new CloseAccountCommand(this.accountId, 0);
     }
 
     protected override ICommandHandler<CloseAccountCommand> OnHandler()
@@ -28,9 +28,9 @@ namespace NEventStoreExample.Test
       return new CloseAccountCommandHandler(this.Repository);
     }
 
-    protected override IEnumerable<IEvent> Expect()
+    protected override IEnumerable<IDomainEvent> Expect()
     {
-      yield return new AccountClosedEvent();
+      yield return new AccountClosedEvent(this.accountId, 1);
     }
   }
 }

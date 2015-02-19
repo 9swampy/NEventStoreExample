@@ -11,9 +11,10 @@ namespace NEventStoreExample.Model
   // Third, it wires up, by convention, my event handlers (the private void Apply(SomeEvent @event) methods
   public class Account : AggregateBase
   {
-    public Account(AccountId id, string name, string twitter) : this(id.Value)
+    public Account(AccountId id, string name, string twitter)
+      : this(id.Value)
     {
-      this.RaiseEvent(new AccountCreatedEvent(Id.Value, name, twitter, true));
+      this.RaiseEvent(new AccountCreatedEvent(Id.Value, 0, name, twitter, true));
     }
 
     // Aggregate should have only one public constructor
@@ -33,12 +34,12 @@ namespace NEventStoreExample.Model
 
     public void Close()
     {
-      this.RaiseEvent(new AccountClosedEvent());
+      this.RaiseEvent(new AccountClosedEvent(this.Id.Value, this.Version));
     }
 
     private void Apply(AccountCreatedEvent @event)
     {
-      this.Id = new AccountId(@event.Id);
+      this.Id = new AccountId(@event.ID);
       this.Name = @event.Name;
       this.Twitter = @event.Twitter;
       this.IsActive = @event.IsActive;

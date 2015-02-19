@@ -12,15 +12,15 @@ namespace NEventStoreExample.Test
   {
     private readonly IConstructAggregates aggregateFactory;
 
-    private readonly List<IEvent> givenEvents;
+    private readonly List<IDomainEvent> givenEvents;
 
-    public InMemoryEventRepository(List<IEvent> givenEvents, IConstructAggregates aggregateFactory)
+    public InMemoryEventRepository(List<IDomainEvent> givenEvents, IConstructAggregates aggregateFactory)
     {
       this.givenEvents = givenEvents;
       this.aggregateFactory = aggregateFactory;
     }
 
-    public List<IEvent> Events { get; private set; }
+    public List<IDomainEvent> Events { get; private set; }
 
     public TAggregate GetById<TAggregate>(Guid id) where TAggregate : class, IAggregate
     {
@@ -52,7 +52,7 @@ namespace NEventStoreExample.Test
 
     public void Save(string bucketId, IAggregate aggregate, Guid commitId, Action<IDictionary<string, object>> updateHeaders)
     {
-      this.Events = aggregate.GetUncommittedEvents().Cast<IEvent>().ToList();
+      this.Events = aggregate.GetUncommittedEvents().Cast<IDomainEvent>().ToList();
     }
 
     public void Dispose()

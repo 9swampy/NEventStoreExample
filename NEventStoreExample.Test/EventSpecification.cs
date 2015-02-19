@@ -38,15 +38,15 @@ namespace NEventStoreExample.Test
       }
     }
 
-    protected abstract IEnumerable<IEvent> Given();
+    protected abstract IEnumerable<IDomainEvent> Given();
 
     protected abstract TCommand When();
 
     protected abstract ICommandHandler<TCommand> OnHandler();
 
-    protected abstract IEnumerable<IEvent> Expect();
+    protected abstract IEnumerable<IDomainEvent> Expect();
 
-    private static void CompareEvents(ICollection<IEvent> expected, ICollection<IEvent> published)
+    private static void CompareEvents(ICollection<IDomainEvent> expected, ICollection<IDomainEvent> published)
     {
       Assert.That(published.Count, Is.EqualTo(expected.Count), "Different number of expected/published events.");
 
