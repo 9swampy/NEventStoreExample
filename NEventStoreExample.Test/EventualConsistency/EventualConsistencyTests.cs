@@ -3,8 +3,8 @@
   using System;
   using System.Threading.Tasks;
   using CommonDomain.Core;
+  using CommonDomain.Persistence;
   using CommonDomain.Persistence.EventStore;
-  using FakeItEasy;
   using FluentAssertions;
   using MemBus;
   using MemBus.Configurators;
@@ -13,7 +13,6 @@
   using NEventStore;
   using NEventStore.Client;
   using NEventStoreExample;
-  using NEventStoreExample.Command;
   using NEventStoreExample.CommandHandler;
   using NEventStoreExample.EventHandler;
   using NEventStoreExample.Infrastructure;
@@ -87,7 +86,7 @@
     {
       var store = Wireup.Init().UsingInMemoryPersistence().Build();
 
-      var repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
+      IRepository repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
       var handler = new CreateAccountCommandHandler(repository);
       var eventHandler = new AccountDenormalizer();
 
@@ -130,11 +129,11 @@
       var repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
       var handler = new CreateAccountCommandHandler(repository);
 
-      var massTransitDispatcher = new MassTransitDispatcher(bus);
-      var pollingClient = new PollingClient(store.Advanced);
-      var commitObserver = pollingClient.ObserveFrom(null);
+      MassTransitDispatcher massTransitDispatcher = new MassTransitDispatcher(bus);
+      PollingClient pollingClient = new PollingClient(store.Advanced, 100);
+      IObserveCommits commitObserver = pollingClient.ObserveFrom(null);
 
-      var denormalizer = new AccountDenormalizer();
+      AccountDenormalizer denormalizer = new AccountDenormalizer();
 
       bus.Subscribe(handler);
       bus.Subscribe(denormalizer);
@@ -178,7 +177,7 @@
       bus.Subscribe(denormalizer);
 
       var massTransitDispatcher = new MassTransitDispatcher(bus);
-      var pollingClient = new PollingClient(store.Advanced);
+      var pollingClient = new PollingClient(store.Advanced, 100);
       var commitObserver = pollingClient.ObserveFrom(null);
 
       using (PollingHook pollingHook = new PollingHook(commitObserver))
@@ -228,7 +227,7 @@
       bus.Subscribe(new OmgSadnessNotifier());
 
       var massTransitDispatcher = new MassTransitDispatcher(bus);
-      var pollingClient = new PollingClient(store.Advanced);
+      var pollingClient = new PollingClient(store.Advanced, 100);
       var commitObserver = pollingClient.ObserveFrom(null);
 
       using (PollingHook pollingHook = new PollingHook(commitObserver))
