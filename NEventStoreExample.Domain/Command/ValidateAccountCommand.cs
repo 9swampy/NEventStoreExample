@@ -1,6 +1,7 @@
 namespace NEventStoreExample.Domain.Command
 {
   using System;
+  using NEventStoreExample.Infrastructure;
 
   public class ValidateAccountCommand : Command
   {

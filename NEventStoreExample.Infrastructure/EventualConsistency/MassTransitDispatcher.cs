@@ -5,7 +5,7 @@ namespace NEventStoreExample.Infrastructure.EventualConsistency
   using NEventStoreExample.Infrastructure;
   using NEventStoreExample.Infrastructure.Bus;
 
-  internal class MassTransitDispatcher : IObserver<ICommit>
+  public class MassTransitDispatcher : IObserver<ICommit>
   {
     private readonly IBus bus;
 

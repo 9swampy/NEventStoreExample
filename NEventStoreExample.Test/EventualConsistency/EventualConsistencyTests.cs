@@ -13,6 +13,7 @@
   using NEventStoreExample.Domain.Model;
   using NEventStoreExample.Infrastructure;
   using NEventStoreExample.Infrastructure.Bus;
+  using NEventStoreExample.Infrastructure.EventualConsistency;
   using NEventStoreExample.ReadModel;
   using NEventStoreExample.ReadModel.EventHandler;
 

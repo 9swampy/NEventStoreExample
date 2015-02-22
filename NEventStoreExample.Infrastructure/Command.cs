@@ -1,8 +1,7 @@
-namespace NEventStoreExample.Domain.Command
+namespace NEventStoreExample.Infrastructure
 {
   using System;
-  using NEventStoreExample.Infrastructure;
-
+  
   public abstract class Command : ICommand
   {
     private readonly int originalVersion;

@@ -50,7 +50,6 @@
     <Compile Include="CommandHandler\CloseAccountCommandHandler.cs" />
     <Compile Include="CommandHandler\CreateAccountCommandHandler.cs" />
     <Compile Include="Command\CloseAccountCommand.cs" />
-    <Compile Include="Command\Command.cs" />
     <Compile Include="Command\CreateAccountCommand.cs" />
     <Compile Include="Command\ValidateAccountCommand.cs" />
     <Compile Include="Event\AccountClosedEvent.cs" />

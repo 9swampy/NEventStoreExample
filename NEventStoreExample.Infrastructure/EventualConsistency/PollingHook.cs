@@ -3,7 +3,7 @@ namespace NEventStoreExample.Infrastructure.EventualConsistency
   using NEventStore;
   using NEventStore.Client;
 
-  internal class PollingHook : PipelineHookBase
+  public class PollingHook : PipelineHookBase
   {
     private readonly IObserveCommits commitsObserver;
 

@@ -1,6 +1,7 @@
 ﻿namespace NEventStoreExample.Domain.Command
 {
   using System;
+  using NEventStoreExample.Infrastructure;
 
   // Commands to do things are sent to your domain
   // For a great discussion on validation with commands, check out http://ingebrigtsen.info/2012/07/28/cqrs-in-asp-net-mvc-with-bifrost/
