@@ -2,7 +2,7 @@
 {
   using System;
 
-  public interface IDomainEvent
+  public interface IDomainEvent : IMessage
   {
     Guid ID { get; }
 

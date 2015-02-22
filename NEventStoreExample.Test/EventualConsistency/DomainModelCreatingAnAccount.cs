@@ -5,15 +5,13 @@
   using CommonDomain.Core;
   using CommonDomain.Persistence.EventStore;
   using FluentAssertions;
-  using MemBus;
-  using MemBus.Configurators;
-  using MemBus.Subscribing;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
   using NEventStore;
   using NEventStoreExample;
   using NEventStoreExample.CommandHandler;
   using NEventStoreExample.Event;
   using NEventStoreExample.Infrastructure;
+  using NEventStoreExample.Infrastructure.Bus;
 
   [TestClass]
   public class DomainModelCreatingAnAccount
@@ -26,13 +24,7 @@
     [ClassInitialize]
     public static void ClassInitialise(TestContext context)
     {
-      bus = BusSetup.StartWith<Conservative>()
-                    .Apply<FlexibleSubscribeAdapter>(a =>
-                    {
-                      a.ByInterface(typeof(IEventHandler<>));
-                      a.ByInterface(typeof(ICommandHandler<>));
-                    })
-                    .Construct();
+      bus = new InProcessBus(DispatchStrategy.Synchronous);
 
       client = new SomeAwesomeUi(bus);
 
@@ -42,7 +34,7 @@
       bus.Subscribe(handler);
       accountId = client.CreateNewAccount();
     }
-
+    
     [TestMethod]
     public void ShouldRaiseCreateAccountEventByTheDomainAccountCtorBeingCalledByTheCommandHandler()
     {

@@ -3,12 +3,8 @@
   using System;
   using System.Threading.Tasks;
   using CommonDomain.Core;
-  using CommonDomain.Persistence;
   using CommonDomain.Persistence.EventStore;
   using FluentAssertions;
-  using MemBus;
-  using MemBus.Configurators;
-  using MemBus.Subscribing;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
   using NEventStore;
   using NEventStore.Client;
@@ -16,6 +12,7 @@
   using NEventStoreExample.CommandHandler;
   using NEventStoreExample.EventHandler;
   using NEventStoreExample.Infrastructure;
+  using NEventStoreExample.Infrastructure.Bus;
   using NEventStoreExample.Model;
 
   [TestClass]
@@ -23,18 +20,25 @@
   {
     private static ISomeAwesomeUi client;
     private static IBus bus;
+    private static EventStoreRepository repository;
+    private static IStoreEvents store;
 
     [ClassInitialize]
     public static void ClassInitialise(TestContext context)
     {
-      bus = BusSetup.StartWith<Conservative>()
-                    .Apply<FlexibleSubscribeAdapter>(a =>
-                    {
-                      a.ByInterface(typeof(IEventHandler<>));
-                      a.ByInterface(typeof(ICommandHandler<>));
-                    })
-                    .Construct();
+      bus = new InProcessBus(DispatchStrategy.Asynchronous);
 
+      store = Wireup.Init()
+                    .UsingInMemoryPersistence()
+                    .Build();
+      repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
+      
+      var createHandler = new CreateAccountCommandHandler(repository);
+      var deactivateHandler = new CloseAccountCommandHandler(repository);
+
+      bus.Subscribe(createHandler);
+      bus.Subscribe(deactivateHandler);
+      
       client = new SomeAwesomeUi(bus);
     }
 
@@ -60,11 +64,6 @@
     [TestMethod]
     public void CanReceiveCreateAccountCommand()
     {
-      var store = Wireup.Init().UsingInMemoryPersistence().Build();
-      var handler = new CreateAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
-
-      bus.Subscribe(handler);
-
       Action act = () => client.CreateNewAccount();
 
       act.ShouldNotThrow();
@@ -73,10 +72,6 @@
     [TestMethod]
     public void CreateAccountEventIsStored()
     {
-      var store = Wireup.Init().UsingInMemoryPersistence().Build();
-      var repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
-      var handler = new CreateAccountCommandHandler(repository);
-      bus.Subscribe(handler);
       var accountId = client.CreateNewAccount();
       store.OpenStream(accountId, 0, int.MaxValue).CommittedEvents.Count.Should().Be(1);
     }
@@ -84,13 +79,8 @@
     [TestMethod]
     public void CreateAccountEventIsStoredAndWhyBotherHavingTheEventHandlerInThisTest()
     {
-      var store = Wireup.Init().UsingInMemoryPersistence().Build();
-
-      IRepository repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
-      var handler = new CreateAccountCommandHandler(repository);
       var eventHandler = new AccountDenormalizer();
 
-      bus.Subscribe(handler);
       bus.Subscribe(eventHandler);
       var accountId = client.CreateNewAccount();
 
@@ -100,12 +90,6 @@
     [TestMethod]
     public void CanLoadAccountFromEventStore()
     {
-      var store = Wireup.Init().UsingInMemoryPersistence().Build();
-      var repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
-      var handler = new CreateAccountCommandHandler(repository);
-
-      bus.Subscribe(handler);
-
       Guid accountID = Guid.NewGuid();
       string name = Guid.NewGuid().ToString();
       string twitter = Guid.NewGuid().ToString();
@@ -122,32 +106,26 @@
     [TestMethod]
     public async Task CreateAccountEventIsPublishedToBus()
     {
-      var store = Wireup.Init()
-                        .UsingInMemoryPersistence()
-                        .Build();
-
-      var repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
-      var handler = new CreateAccountCommandHandler(repository);
-
       MassTransitDispatcher massTransitDispatcher = new MassTransitDispatcher(bus);
       PollingClient pollingClient = new PollingClient(store.Advanced, 100);
       IObserveCommits commitObserver = pollingClient.ObserveFrom(null);
 
       AccountDenormalizer denormalizer = new AccountDenormalizer();
 
-      bus.Subscribe(handler);
       bus.Subscribe(denormalizer);
 
       using (PollingHook pollingHook = new PollingHook(commitObserver))
       {
         using (var subscription = commitObserver.Subscribe(massTransitDispatcher))
         {
+          commitObserver.PollNow();
           commitObserver.Start();
 
           Guid accountID = Guid.NewGuid();
           string name = Guid.NewGuid().ToString();
           string twitter = Guid.NewGuid().ToString();
 
+          System.Diagnostics.Debug.Print(string.Format("Creating account {0}", accountID));
           client.CreateNewAccount(accountID, name, twitter);
 
           DateTime timeoutEnd = DateTime.Now.AddSeconds(10);
@@ -164,16 +142,8 @@
     [TestMethod]
     public async Task DeactivingAccountDoesntRetriggerInitialCreate()
     {
-      var store = Wireup.Init()
-                        .UsingInMemoryPersistence()
-                        .Build();
-
-      var createHandler = new CreateAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
-      var deactivateHandler = new CloseAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
       var denormalizer = new AccountDenormalizer();
 
-      bus.Subscribe(createHandler);
-      bus.Subscribe(deactivateHandler);
       bus.Subscribe(denormalizer);
 
       var massTransitDispatcher = new MassTransitDispatcher(bus);
@@ -184,6 +154,7 @@
       {
         using (var subscription = commitObserver.Subscribe(massTransitDispatcher))
         {
+          commitObserver.PollNow();
           commitObserver.Start();
 
           Guid accountID = Guid.NewGuid();
@@ -211,16 +182,7 @@
     [TestMethod]
     public async Task TyingItTogether()
     {
-      var store = Wireup.Init()
-                        .UsingInMemoryPersistence()
-                        .Build();
-
-      var createHandler = new CreateAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
-      var deactivateHandler = new CloseAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
       var denormalizer = new AccountDenormalizer();
-
-      bus.Subscribe(createHandler);
-      bus.Subscribe(deactivateHandler);
 
       bus.Subscribe(denormalizer);
       bus.Subscribe(new KaChingNotifier());
@@ -234,6 +196,7 @@
       {
         using (var subscription = commitObserver.Subscribe(massTransitDispatcher))
         {
+          commitObserver.PollNow();
           commitObserver.Start();
 
           Guid accountID = Guid.NewGuid();
@@ -246,7 +209,7 @@
           DateTime timeoutEnd = DateTime.Now.AddSeconds(10);
           while ((denormalizer.AccountName != name ||
                   denormalizer.IsActive) &&
-                 DateTime.Now < timeoutEnd)
+                  DateTime.Now < timeoutEnd)
           {
             await Task.Delay(100);
           }

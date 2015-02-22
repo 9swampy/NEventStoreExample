@@ -10,14 +10,13 @@
   public class AccountCreatedEvent : DomainEvent
   {
     public AccountCreatedEvent(Guid id, int version, string name, string twitter, bool isActive)
-      :base(id, version)
+      : base(id, version)
     {
       this.Name = name;
       this.Twitter = twitter;
       this.IsActive = isActive;
     }
 
-    
     public string Name { get; private set; }
 
     public string Twitter { get; private set; }

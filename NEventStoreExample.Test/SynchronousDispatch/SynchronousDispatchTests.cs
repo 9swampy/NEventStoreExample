@@ -3,9 +3,6 @@
   using System;
   using CommonDomain.Core;
   using CommonDomain.Persistence.EventStore;
-  using MemBus;
-  using MemBus.Configurators;
-  using MemBus.Subscribing;
   using NEventStore;
   using NEventStore.Dispatcher;
   using NEventStoreExample;
@@ -15,11 +12,14 @@
   using NEventStoreExample.Model;
   using FluentAssertions;
   using Xunit;
+  using NEventStoreExample.Infrastructure.Bus;
 
   public class SynchronousDispatchTests
   {
     private readonly ISomeAwesomeUi client;
     private readonly IBus bus;
+    private readonly IStoreEvents store;
+    private readonly EventStoreRepository repository;
 
     // Here, I'm wiring up my MemBus instance and telling it how to resolve my subscribers
     // MemBus also has an awesome way to resolve subscribers from an IoC container. In prod,
@@ -28,13 +28,20 @@
     // simply publishes commands to my MemBus instance (and, again, it could be whatever)
     public SynchronousDispatchTests()
     {
-      this.bus = BusSetup.StartWith<Conservative>()
-                         .Apply<FlexibleSubscribeAdapter>(a =>
-                         {
-                           a.ByInterface(typeof(IEventHandler<>));
-                           a.ByInterface(typeof(ICommandHandler<>));
-                         })
-                         .Construct();
+      this.bus = new InProcessBus(DispatchStrategy.Synchronous);
+
+#pragma warning disable 0618
+      store = Wireup.Init()
+                    .UsingInMemoryPersistence()
+                    .UsingSynchronousDispatchScheduler()
+                    .DispatchTo(new DelegateMessageDispatcher(c => DelegateDispatcher.DispatchCommit(this.bus, c)))
+                    .Build();
+#pragma warning restore 0618
+
+      repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
+      var handler = new CreateAccountCommandHandler(repository);
+      
+      this.bus.Subscribe(handler);
 
       this.client = new SomeAwesomeUi(this.bus);
     }
@@ -49,27 +56,16 @@
     [Fact]
     public void CanReceiveCreateAccountCommand()
     {
-      var store = Wireup.Init().UsingInMemoryPersistence().Build();
-      var handler = new CreateAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
-
-      this.bus.Subscribe(handler);
-
       Action act = () => this.client.CreateNewAccount();
-
       act.ShouldNotThrow();
     }
 
     [Fact]
     public void CreateAccountEventIsStored()
     {
-      var store = Wireup.Init().UsingInMemoryPersistence().Build();
-
-      var repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
-      var handler = new CreateAccountCommandHandler(repository);
       var eventHandler = new AccountDenormalizer();
-
-      this.bus.Subscribe(handler);
       this.bus.Subscribe(eventHandler);
+
       var accountId = this.client.CreateNewAccount();
 
       store.OpenStream(accountId, 0, int.MaxValue).CommittedEvents.Count.Should().BeGreaterThan(0);
@@ -78,12 +74,6 @@
     [Fact]
     public void CanLoadAccountFromEventStore()
     {
-      var store = Wireup.Init().UsingInMemoryPersistence().Build();
-      var repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
-      var handler = new CreateAccountCommandHandler(repository);
-
-      this.bus.Subscribe(handler);
-
       Guid accountID = Guid.NewGuid();
       string name = Guid.NewGuid().ToString();
       string twitter = Guid.NewGuid().ToString();
@@ -100,16 +90,8 @@
     [Fact]
     public void CreateAccountEventIsPublishedToBus()
     {
-      var store = Wireup.Init()
-                        .UsingInMemoryPersistence()
-                        .UsingSynchronousDispatchScheduler()
-                        .DispatchTo(new DelegateMessageDispatcher(c => DelegateDispatcher.DispatchCommit(this.bus, c)))
-                        .Build();
-
-      var handler = new CreateAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
       var denormalizer = new AccountDenormalizer();
 
-      this.bus.Subscribe(handler);
       this.bus.Subscribe(denormalizer);
 
       Guid accountID = Guid.NewGuid();
@@ -124,17 +106,9 @@
     [Fact]
     public void DeactivingAccountDoesntRetriggerInitialCreate()
     {
-      var store = Wireup.Init()
-                        .UsingInMemoryPersistence()
-                        .UsingSynchronousDispatchScheduler()
-                        .DispatchTo(new DelegateMessageDispatcher(c => DelegateDispatcher.DispatchCommit(this.bus, c)))
-                        .Build();
-
-      var createHandler = new CreateAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
       var deactivateHandler = new CloseAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
       var denormalizer = new AccountDenormalizer();
 
-      this.bus.Subscribe(createHandler);
       this.bus.Subscribe(deactivateHandler);
       this.bus.Subscribe(denormalizer);
 
@@ -155,17 +129,9 @@
     [Fact]
     public void TyingItTogether()
     {
-      var store = Wireup.Init()
-                        .UsingInMemoryPersistence()
-                        .UsingSynchronousDispatchScheduler()
-                        .DispatchTo(new DelegateMessageDispatcher(c => DelegateDispatcher.DispatchCommit(this.bus, c)))
-                        .Build();
-
-      var createHandler = new CreateAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
       var deactivateHandler = new CloseAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
       var denormalizer = new AccountDenormalizer();
 
-      this.bus.Subscribe(createHandler);
       this.bus.Subscribe(deactivateHandler);
 
       this.bus.Subscribe(denormalizer);

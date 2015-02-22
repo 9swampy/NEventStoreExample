@@ -2,10 +2,10 @@ namespace NEventStoreExample
 {
   using System;
   using System.Collections.Generic;
-  using MemBus;
   using NEventStoreExample.Command;
   using NEventStoreExample.Event;
   using NEventStoreExample.Infrastructure;
+  using NEventStoreExample.Infrastructure.Bus;
 
   public class SomeAwesomeViewModel : IEventHandler<AccountCreatedEvent>, IEventHandler<AccountClosedEvent>, ISomeAwesomeViewModel
   {
@@ -20,7 +20,7 @@ namespace NEventStoreExample
     public void CreateNewAccount()
     {
       var createCommand = new CreateAccountCommand(this.AccountID, this.Name, this.Twitter);
-      this.bus.Publish(createCommand);
+      this.bus.Send(createCommand);
     }
 
     public void CloseAccount()
@@ -36,7 +36,7 @@ namespace NEventStoreExample
         originalVersion = -1;
       }
       var closeCommand = new CloseAccountCommand(this.AccountID, originalVersion);
-      this.bus.Publish(closeCommand);
+      this.bus.Send(closeCommand);
     }
 
     public SomeAwesomeViewModel()

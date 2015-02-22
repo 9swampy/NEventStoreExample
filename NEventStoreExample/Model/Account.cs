@@ -34,7 +34,7 @@ namespace NEventStoreExample.Model
 
     public void Close()
     {
-      this.RaiseEvent(new AccountClosedEvent(this.Id.Value, this.Version));
+      this.RaiseEvent(new AccountClosedEvent(this.Id.Value, this.Version, Guid.NewGuid(), Guid.Empty));
     }
 
     private void Apply(AccountCreatedEvent @event)

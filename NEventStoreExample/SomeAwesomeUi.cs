@@ -1,7 +1,7 @@
 ﻿namespace NEventStoreExample
 {
   using System;
-  using MemBus;
+  using NEventStoreExample.Infrastructure.Bus;
 
   public class SomeAwesomeUi : ISomeAwesomeUi
   {

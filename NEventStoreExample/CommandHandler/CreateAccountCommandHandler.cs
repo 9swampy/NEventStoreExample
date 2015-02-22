@@ -22,7 +22,7 @@ namespace NEventStoreExample.CommandHandler
 
     public void Handle(CreateAccountCommand command)
     {
-      var account = new Account(new AccountId(command.Id), command.Name, command.Twitter);
+      var account = new Account(new AccountId(command.AggregateID), command.Name, command.Twitter);
 
       this.repository.Save(account, Guid.NewGuid());
     }

@@ -1,8 +1,9 @@
 namespace NEventStoreExample.Test.EventualConsistency
 {
   using System;
-  using MemBus;
   using NEventStore;
+  using NEventStoreExample.Infrastructure;
+  using NEventStoreExample.Infrastructure.Bus;
 
   internal class MassTransitDispatcher : IObserver<ICommit>
   {
@@ -21,7 +22,14 @@ namespace NEventStoreExample.Test.EventualConsistency
     {
       foreach (var @event in commit.Events)
       {
-        this.bus.Publish(@event.Body);
+        if (@event.Body is IDomainEvent)
+        {
+          this.bus.Publish(@event.Body as IDomainEvent);
+        }
+        else
+        {
+          throw new NotImplementedException();
+        }
       }
     }
 

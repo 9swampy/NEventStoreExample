@@ -30,7 +30,7 @@
 
     protected override IEnumerable<IDomainEvent> Expect()
     {
-      yield return new AccountClosedEvent(this.accountId, 1);
+      yield return new AccountClosedEvent(this.accountId, 1, Guid.NewGuid(), Guid.Empty);
     }
   }
 }

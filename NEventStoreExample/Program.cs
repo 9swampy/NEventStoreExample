@@ -1,7 +1,6 @@
 ﻿using System;
 using CommonDomain.Core;
 using CommonDomain.Persistence.EventStore;
-using MemBus;
 using MemBus.Configurators;
 using MemBus.Subscribing;
 using NEventStore;
@@ -9,6 +8,7 @@ using NEventStore.Dispatcher;
 using NEventStoreExample.CommandHandler;
 using NEventStoreExample.EventHandler;
 using NEventStoreExample.Infrastructure;
+using NEventStoreExample.Infrastructure.Bus;
 
 namespace NEventStoreExample
 {
@@ -20,13 +20,13 @@ namespace NEventStoreExample
 
     public static void Main(string[] args)
     {
-      var bus = BusSetup.StartWith<Conservative>()
-                        .Apply<FlexibleSubscribeAdapter>(a =>
-                        {
-                          a.ByInterface(typeof(IEventHandler<>));
-                          a.ByInterface(typeof(ICommandHandler<>));
-                        })
-                        .Construct();
+      IBus bus = new MemBusAdapter(MemBus.BusSetup.StartWith<Conservative>()
+                                                  .Apply<FlexibleSubscribeAdapter>(a =>
+                                                  {
+                                                    a.ByInterface(typeof(IEventHandler<>));
+                                                    a.ByInterface(typeof(ICommandHandler<>));
+                                                  })
+                                                  .Construct());
 
       var someAwesomeUi = new SomeAwesomeUi(bus);
 
@@ -51,8 +51,8 @@ namespace NEventStoreExample
     private static IStoreEvents WireupEventStore(IBus bus)
     {
       return Wireup.Init()
-      ////.LogToOutputWindow()
-      ////.LogToConsoleWindow()
+        ////.LogToOutputWindow()
+        ////.LogToConsoleWindow()
                    .UsingInMemoryPersistence()
                    .UsingJsonSerialization()
                    .Compress()

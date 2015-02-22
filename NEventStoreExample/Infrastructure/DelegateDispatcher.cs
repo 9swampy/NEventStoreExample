@@ -1,5 +1,7 @@
-﻿using MemBus;
+﻿using System;
+using MemBus;
 using NEventStore;
+using NEventStoreExample.Infrastructure.Bus;
 
 namespace NEventStoreExample.Infrastructure
 {
@@ -18,7 +20,7 @@ namespace NEventStoreExample.Infrastructure
   // we might put NSB or MassTransit or EasyNetQ or whatever in place.
   public static class DelegateDispatcher
   {
-    public static void DispatchCommit(IPublisher bus, ICommit commit)
+    public static void DispatchCommit(IEventPublisher bus, ICommit commit)
     {
       // This is where we'd hook into our messaging infrastructure, such as NServiceBus,
       // MassTransit, WCF, or some other communications infrastructure.
@@ -26,7 +28,14 @@ namespace NEventStoreExample.Infrastructure
       foreach (var @event in commit.Events)
       {
         System.Diagnostics.Debug.Print(string.Format("Dispatch {0}", @event.Body.GetType().Name));
-        bus.Publish(@event.Body);
+        if (@event.Body is IDomainEvent)
+        {
+          bus.Publish(@event.Body as IDomainEvent);
+        }
+        else
+        {
+          throw new NotImplementedException();
+        }        
       }
     }
   }

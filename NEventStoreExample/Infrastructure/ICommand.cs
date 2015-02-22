@@ -1,6 +1,9 @@
 ﻿namespace NEventStoreExample.Infrastructure
 {
-  public interface ICommand
+  using System;
+
+  public interface ICommand : IMessage
   {
+    Guid CorrelationID { get; }
   }
 }

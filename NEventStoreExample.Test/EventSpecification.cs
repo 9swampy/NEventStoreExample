@@ -51,6 +51,7 @@ namespace NEventStoreExample.Test
       Assert.That(published.Count, Is.EqualTo(expected.Count), "Different number of expected/published events.");
 
       var compareObjects = new CompareObjects();
+      compareObjects.ElementsToIgnore.Add("CorrelationID");
 
       var eventPairs = expected.Zip(published, (e, p) => new { Expected = e, Produced = p });
       foreach (var events in eventPairs)
