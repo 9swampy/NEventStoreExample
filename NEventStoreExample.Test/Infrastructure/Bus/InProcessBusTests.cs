@@ -3,11 +3,11 @@
   using System;
   using System.Linq;
   using FakeItEasy;
+  using FluentAssertions;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
-  using NEventStoreExample.Event;
+  using NEventStoreExample.Domain.Event;
   using NEventStoreExample.Infrastructure;
   using NEventStoreExample.Infrastructure.Bus;
-  using FluentAssertions;
 
   [TestClass]
   public class InProcessBusTests

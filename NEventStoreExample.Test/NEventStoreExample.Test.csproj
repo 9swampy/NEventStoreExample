@@ -84,6 +84,18 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NEventStoreExample.Domain\NEventStoreExample.Domain.csproj">
+      <Project>{37d44e92-9a47-4230-b40a-f735da581a06}</Project>
+      <Name>NEventStoreExample.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NEventStoreExample.Infrastructure\NEventStoreExample.Infrastructure.csproj">
+      <Project>{f2c8dda3-c802-4159-8310-8dd090c09f8e}</Project>
+      <Name>NEventStoreExample.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NEventStoreExample.ReadModel\NEventStoreExample.ReadModel.csproj">
+      <Project>{bbdb50e3-823c-4696-a8e7-b29880f6929e}</Project>
+      <Name>NEventStoreExample.ReadModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NEventStoreExample\NEventStoreExample.csproj">
       <Project>{60ba00d5-1865-4854-9192-ba72e18a76b2}</Project>
       <Name>NEventStoreExample</Name>

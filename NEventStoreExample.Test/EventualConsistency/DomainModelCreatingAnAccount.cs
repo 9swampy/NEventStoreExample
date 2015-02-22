@@ -8,8 +8,8 @@
   using Microsoft.VisualStudio.TestTools.UnitTesting;
   using NEventStore;
   using NEventStoreExample;
-  using NEventStoreExample.CommandHandler;
-  using NEventStoreExample.Event;
+  using NEventStoreExample.Domain.CommandHandler;
+  using NEventStoreExample.Domain.Event;
   using NEventStoreExample.Infrastructure;
   using NEventStoreExample.Infrastructure.Bus;
 

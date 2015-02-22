@@ -5,11 +5,11 @@ namespace NEventStoreExample.Test.ProcessManager
   using FakeItEasy;
   using FluentAssertions;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
-  using NEventStoreExample.Command;
-  using NEventStoreExample.Event;
+  using NEventStoreExample.Domain.Command;
+  using NEventStoreExample.Domain.Event;
+  using NEventStoreExample.Domain.ProcessManager;
   using NEventStoreExample.Infrastructure;
   using NEventStoreExample.Infrastructure.Bus;
-  using NEventStoreExample.ProcessManager;
 
   [TestClass]
   public class WiredAccountOpenerTests
@@ -21,7 +21,6 @@ namespace NEventStoreExample.Test.ProcessManager
     [ClassInitialize]
     public static void ClassInitialise(TestContext ctx)
     {
-
     }
 
     [TestInitialize]

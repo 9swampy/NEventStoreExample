@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NEventStoreExample", "NEventStoreExample\NEventStoreExample.csproj", "{60BA00D5-1865-4854-9192-BA72E18A76B2}"
 EndProject
@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NEventStoreExample.Test", "
 	ProjectSection(ProjectDependencies) = postProject
 		{60BA00D5-1865-4854-9192-BA72E18A76B2} = {60BA00D5-1865-4854-9192-BA72E18A76B2}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NEventStoreExample.Domain", "NEventStoreExample.Domain\NEventStoreExample.Domain.csproj", "{37D44E92-9A47-4230-B40A-F735DA581A06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NEventStoreExample.Infrastructure", "NEventStoreExample.Infrastructure\NEventStoreExample.Infrastructure.csproj", "{F2C8DDA3-C802-4159-8310-8DD090C09F8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NEventStoreExample.ReadModel", "NEventStoreExample.ReadModel\NEventStoreExample.ReadModel.csproj", "{BBDB50E3-823C-4696-A8E7-B29880F6929E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +30,18 @@ Global
 		{210BFD16-EDCF-4895-90E6-FACF137EAFE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{210BFD16-EDCF-4895-90E6-FACF137EAFE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{210BFD16-EDCF-4895-90E6-FACF137EAFE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37D44E92-9A47-4230-B40A-F735DA581A06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37D44E92-9A47-4230-B40A-F735DA581A06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37D44E92-9A47-4230-B40A-F735DA581A06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37D44E92-9A47-4230-B40A-F735DA581A06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2C8DDA3-C802-4159-8310-8DD090C09F8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2C8DDA3-C802-4159-8310-8DD090C09F8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2C8DDA3-C802-4159-8310-8DD090C09F8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2C8DDA3-C802-4159-8310-8DD090C09F8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBDB50E3-823C-4696-A8E7-B29880F6929E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBDB50E3-823C-4696-A8E7-B29880F6929E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBDB50E3-823C-4696-A8E7-B29880F6929E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBDB50E3-823C-4696-A8E7-B29880F6929E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

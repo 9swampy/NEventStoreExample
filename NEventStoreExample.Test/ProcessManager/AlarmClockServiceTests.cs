@@ -4,9 +4,9 @@
   using FakeItEasy;
   using FluentAssertions;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
-  using NEventStoreExample.Event;
+  using NEventStoreExample.Domain.Event;
+  using NEventStoreExample.Domain.ProcessManager;
   using NEventStoreExample.Infrastructure.Bus;
-  using NEventStoreExample.ProcessManager;
 
   [TestClass]
   public class AlarmClockServiceTests

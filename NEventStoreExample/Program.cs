@@ -5,10 +5,10 @@ using MemBus.Configurators;
 using MemBus.Subscribing;
 using NEventStore;
 using NEventStore.Dispatcher;
-using NEventStoreExample.CommandHandler;
-using NEventStoreExample.EventHandler;
+using NEventStoreExample.Domain.CommandHandler;
 using NEventStoreExample.Infrastructure;
 using NEventStoreExample.Infrastructure.Bus;
+using NEventStoreExample.ReadModel.EventHandler;
 
 namespace NEventStoreExample
 {
@@ -20,13 +20,14 @@ namespace NEventStoreExample
 
     public static void Main(string[] args)
     {
-      IBus bus = new MemBusAdapter(MemBus.BusSetup.StartWith<Conservative>()
-                                                  .Apply<FlexibleSubscribeAdapter>(a =>
-                                                  {
-                                                    a.ByInterface(typeof(IEventHandler<>));
-                                                    a.ByInterface(typeof(ICommandHandler<>));
-                                                  })
-                                                  .Construct());
+      IBus bus = new MemBusAdapter(MemBus.BusSetup
+                                         .StartWith<Conservative>()
+                                         .Apply<FlexibleSubscribeAdapter>(a =>
+                                         {
+                                           a.ByInterface(typeof(IEventHandler<>));
+                                           a.ByInterface(typeof(ICommandHandler<>));
+                                         })
+                                         .Construct());
 
       var someAwesomeUi = new SomeAwesomeUi(bus);
 
@@ -51,8 +52,8 @@ namespace NEventStoreExample
     private static IStoreEvents WireupEventStore(IBus bus)
     {
       return Wireup.Init()
-        ////.LogToOutputWindow()
-        ////.LogToConsoleWindow()
+      ////.LogToOutputWindow()
+      ////.LogToConsoleWindow()
                    .UsingInMemoryPersistence()
                    .UsingJsonSerialization()
                    .Compress()

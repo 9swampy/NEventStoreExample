@@ -3,16 +3,17 @@
   using System;
   using CommonDomain.Core;
   using CommonDomain.Persistence.EventStore;
+  using FluentAssertions;
   using NEventStore;
   using NEventStore.Dispatcher;
   using NEventStoreExample;
-  using NEventStoreExample.CommandHandler;
-  using NEventStoreExample.EventHandler;
+  using NEventStoreExample.Domain.CommandHandler;
+  using NEventStoreExample.Domain.Model;
   using NEventStoreExample.Infrastructure;
-  using NEventStoreExample.Model;
-  using FluentAssertions;
-  using Xunit;
   using NEventStoreExample.Infrastructure.Bus;
+  using NEventStoreExample.ReadModel;
+  using NEventStoreExample.ReadModel.EventHandler;
+  using Xunit;
 
   public class SynchronousDispatchTests
   {
@@ -30,16 +31,16 @@
     {
       this.bus = new InProcessBus(DispatchStrategy.Synchronous);
 
-#pragma warning disable 0618
-      store = Wireup.Init()
-                    .UsingInMemoryPersistence()
-                    .UsingSynchronousDispatchScheduler()
-                    .DispatchTo(new DelegateMessageDispatcher(c => DelegateDispatcher.DispatchCommit(this.bus, c)))
-                    .Build();
-#pragma warning restore 0618
+      #pragma warning disable 0618
+      this.store = Wireup.Init()
+                         .UsingInMemoryPersistence()
+                         .UsingSynchronousDispatchScheduler()
+                         .DispatchTo(new DelegateMessageDispatcher(c => DelegateDispatcher.DispatchCommit(this.bus, c)))
+                         .Build();
+      #pragma warning restore 0618
 
-      repository = new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector());
-      var handler = new CreateAccountCommandHandler(repository);
+      this.repository = new EventStoreRepository(this.store, new AggregateFactory(), new ConflictDetector());
+      var handler = new CreateAccountCommandHandler(this.repository);
       
       this.bus.Subscribe(handler);
 
@@ -68,7 +69,7 @@
 
       var accountId = this.client.CreateNewAccount();
 
-      store.OpenStream(accountId, 0, int.MaxValue).CommittedEvents.Count.Should().BeGreaterThan(0);
+      this.store.OpenStream(accountId, 0, int.MaxValue).CommittedEvents.Count.Should().BeGreaterThan(0);
     }
 
     [Fact]
@@ -80,7 +81,7 @@
 
       this.client.CreateNewAccount(accountID, name, twitter);
 
-      Account account = repository.GetById<Account>(accountID);
+      Account account = this.repository.GetById<Account>(accountID);
 
       account.Should().NotBeNull();
       account.Name.Should().Be(name);
@@ -106,7 +107,7 @@
     [Fact]
     public void DeactivingAccountDoesntRetriggerInitialCreate()
     {
-      var deactivateHandler = new CloseAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
+      var deactivateHandler = new CloseAccountCommandHandler(new EventStoreRepository(this.store, new AggregateFactory(), new ConflictDetector()));
       var denormalizer = new AccountDenormalizer();
 
       this.bus.Subscribe(deactivateHandler);
@@ -121,7 +122,7 @@
 
       denormalizer.AccountName.Should().Be(name);
       denormalizer.IsActive.Should().Be(false);
-      store.OpenStream(accountID, 0, int.MaxValue).CommittedEvents.Count.Should().Be(2);
+      this.store.OpenStream(accountID, 0, int.MaxValue).CommittedEvents.Count.Should().Be(2);
     }
 
     //For fun, run this with the Debugger (eg, if using TDD.NET then right click on this method and select Test With -> Debugger.
@@ -129,7 +130,7 @@
     [Fact]
     public void TyingItTogether()
     {
-      var deactivateHandler = new CloseAccountCommandHandler(new EventStoreRepository(store, new AggregateFactory(), new ConflictDetector()));
+      var deactivateHandler = new CloseAccountCommandHandler(new EventStoreRepository(this.store, new AggregateFactory(), new ConflictDetector()));
       var denormalizer = new AccountDenormalizer();
 
       this.bus.Subscribe(deactivateHandler);
@@ -147,7 +148,7 @@
 
       denormalizer.AccountName.Should().Be(name);
       denormalizer.IsActive.Should().Be(false);
-      store.OpenStream(accountID, 0, int.MaxValue).CommittedEvents.Count.Should().Be(2);
+      this.store.OpenStream(accountID, 0, int.MaxValue).CommittedEvents.Count.Should().Be(2);
     }
   }
 }

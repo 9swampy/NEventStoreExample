@@ -3,7 +3,7 @@ namespace NEventStoreExample.Test
   using System;
   using FakeItEasy;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
-  using NEventStoreExample.Command;
+  using NEventStoreExample.Domain.Command;
   using NEventStoreExample.Infrastructure.Bus;
 
   [TestClass]
@@ -11,7 +11,6 @@ namespace NEventStoreExample.Test
   {
     private static IBus bus;
     private static ISomeAwesomeViewModel sut;
-
     
     [TestInitialize]
     public void TestInitialise()
@@ -38,9 +37,9 @@ namespace NEventStoreExample.Test
       sut.CreateNewAccount();
 
       A.CallTo(() => bus.Send(A<CreateAccountCommand>.Ignored)).WhenArgumentsMatch((args) =>
-                                                                                               ((CreateAccountCommand)args[0]).AggregateID == sut.AccountID &&
-                                                                                               ((CreateAccountCommand)args[0]).Name == sut.Name &&
-                                                                                               ((CreateAccountCommand)args[0]).Twitter == sut.Twitter).MustHaveHappened();
+                                                                                            ((CreateAccountCommand)args[0]).AggregateID == sut.AccountID &&
+                                                                                            ((CreateAccountCommand)args[0]).Name == sut.Name &&
+                                                                                            ((CreateAccountCommand)args[0]).Twitter == sut.Twitter).MustHaveHappened();
     }
 
     [TestMethod]

@@ -2,9 +2,9 @@
 {
   using System;
   using System.Collections.Generic;
-  using NEventStoreExample.Command;
-  using NEventStoreExample.CommandHandler;
-  using NEventStoreExample.Event;
+  using NEventStoreExample.Domain.Command;
+  using NEventStoreExample.Domain.CommandHandler;
+  using NEventStoreExample.Domain.Event;
   using NEventStoreExample.Infrastructure;
   using NUnit.Framework;
 

@@ -9,11 +9,12 @@
   using NEventStore;
   using NEventStore.Client;
   using NEventStoreExample;
-  using NEventStoreExample.CommandHandler;
-  using NEventStoreExample.EventHandler;
+  using NEventStoreExample.Domain.CommandHandler;
+  using NEventStoreExample.Domain.Model;
   using NEventStoreExample.Infrastructure;
   using NEventStoreExample.Infrastructure.Bus;
-  using NEventStoreExample.Model;
+  using NEventStoreExample.ReadModel;
+  using NEventStoreExample.ReadModel.EventHandler;
 
   [TestClass]
   public class EventualConsistencyTests
@@ -209,7 +210,7 @@
           DateTime timeoutEnd = DateTime.Now.AddSeconds(10);
           while ((denormalizer.AccountName != name ||
                   denormalizer.IsActive) &&
-                  DateTime.Now < timeoutEnd)
+                 DateTime.Now < timeoutEnd)
           {
             await Task.Delay(100);
           }

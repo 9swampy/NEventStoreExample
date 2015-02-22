@@ -2,6 +2,7 @@
 {
   using System;
   using System.Collections.Generic;
+  using NEventStoreExample.ReadModel;
 
   public interface ISomeAwesomeViewModel
   {

@@ -3,7 +3,7 @@
   using System;
   using FakeItEasy;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
-  using NEventStoreExample.Command;
+  using NEventStoreExample.Domain.Command;
   using NEventStoreExample.Infrastructure.Bus;
 
   [TestClass]
@@ -30,9 +30,9 @@
       sut.CreateNewAccount(accountID, name, twitter);
 
       A.CallTo(() => bus.Send(A<CreateAccountCommand>.Ignored)).WhenArgumentsMatch((args) =>
-                                                                                               ((CreateAccountCommand)args[0]).AggregateID == accountID &&
-                                                                                               ((CreateAccountCommand)args[0]).Name == name &&
-                                                                                               ((CreateAccountCommand)args[0]).Twitter == twitter).MustHaveHappened();
+                                                                                            ((CreateAccountCommand)args[0]).AggregateID == accountID &&
+                                                                                            ((CreateAccountCommand)args[0]).Name == name &&
+                                                                                            ((CreateAccountCommand)args[0]).Twitter == twitter).MustHaveHappened();
     }
 
     [TestMethod]
