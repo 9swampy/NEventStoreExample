@@ -57,6 +57,8 @@
     <Compile Include="Bus\ISubscriber.cs" />
     <Compile Include="Bus\SubscriptionDisposer.cs" />
     <Compile Include="DelegateDispatcher.cs" />
+    <Compile Include="EventualConsistency\MassTransitDispatcher.cs" />
+    <Compile Include="EventualConsistency\PollingHook.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="ICommandHandler.cs" />
     <Compile Include="IDomainEvent.cs" />

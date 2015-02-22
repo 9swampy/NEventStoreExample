@@ -73,8 +73,6 @@
     <Compile Include="SomeAwesomeViewModelTests.cs" />
     <Compile Include="SynchronousDispatch\SynchronousDispatchTests.cs" />
     <Compile Include="EventSpecification.cs" />
-    <Compile Include="EventualConsistency\MassTransitDispatcher.cs" />
-    <Compile Include="EventualConsistency\PollingHook.cs" />
     <Compile Include="InMemoryEventRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="when_creating_an_account.cs" />

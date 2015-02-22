@@ -1,4 +1,4 @@
-namespace NEventStoreExample.Test.EventualConsistency
+namespace NEventStoreExample.Infrastructure.EventualConsistency
 {
   using NEventStore;
   using NEventStore.Client;
