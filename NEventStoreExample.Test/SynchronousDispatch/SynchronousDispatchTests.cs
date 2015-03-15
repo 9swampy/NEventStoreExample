@@ -11,6 +11,7 @@
   using NEventStoreExample.Domain.Model;
   using NEventStoreExample.Infrastructure;
   using NEventStoreExample.Infrastructure.Bus;
+  using NEventStoreExample.Infrastructure.EventualConsistency;
   using NEventStoreExample.ReadModel;
   using NEventStoreExample.ReadModel.EventHandler;
   using Xunit;
@@ -35,7 +36,7 @@
       this.store = Wireup.Init()
                          .UsingInMemoryPersistence()
                          .UsingSynchronousDispatchScheduler()
-                         .DispatchTo(new DelegateMessageDispatcher(c => DelegateDispatcher.DispatchCommit(this.bus, c)))
+                         .DispatchTo(new DelegateMessageDispatcher(c => MassTransitDispatcher.DispatchCommit(this.bus, c)))
                          .Build();
       #pragma warning restore 0618
 

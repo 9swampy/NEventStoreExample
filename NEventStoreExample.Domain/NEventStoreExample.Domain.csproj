@@ -61,9 +61,7 @@
     <Compile Include="Event\AlarmCreatedEvent.cs" />
     <Compile Include="Event\AlarmRaisedEvent.cs" />
     <Compile Include="Event\DomainCorrelationEvent.cs" />
-    <Compile Include="Event\DomainEvent.cs" />
     <Compile Include="Model\Account.cs" />
-    <Compile Include="Model\AccountId.cs" />
     <Compile Include="Model\Address.cs" />
     <Compile Include="ProcessManager\AccountOpener.cs" />
     <Compile Include="ProcessManager\AccountOpenerFactory.cs" />

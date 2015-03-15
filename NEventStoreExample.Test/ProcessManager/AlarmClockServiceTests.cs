@@ -1,6 +1,7 @@
 ﻿namespace NEventStoreExample.Test
 {
   using System;
+  using System.Threading.Tasks;
   using FakeItEasy;
   using FluentAssertions;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -28,12 +29,13 @@
     }
 
     [TestMethod]
-    public void ShouldPublishAlarmRaisedEvent()
+    public async Task ShouldPublishAlarmRaisedEvent()
     {
       Guid id = Guid.NewGuid();
       Guid correlationID = Guid.NewGuid();
       Guid causationID = Guid.NewGuid();
       sut.Handle(new AlarmCreatedEvent(id, 0, correlationID, causationID, 0));
+      await Task.Delay(10);
       A.CallTo(() => (bus as IEventPublisher).Publish<AlarmRaisedEvent>(A<AlarmRaisedEvent>.Ignored)).MustHaveHappened();
     }
   }

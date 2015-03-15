@@ -1,4 +1,4 @@
-namespace NEventStoreExample.Infrastructure
+﻿namespace NEventStoreExample.Infrastructure
 {
   using System;
   

@@ -4,8 +4,5 @@
 
   public interface IDomainEvent : IMessage
   {
-    Guid ID { get; }
-
-    int Version { get; }
   }
 }

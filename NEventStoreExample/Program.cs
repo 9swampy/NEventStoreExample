@@ -8,6 +8,7 @@ using NEventStore.Dispatcher;
 using NEventStoreExample.Domain.CommandHandler;
 using NEventStoreExample.Infrastructure;
 using NEventStoreExample.Infrastructure.Bus;
+using NEventStoreExample.Infrastructure.EventualConsistency;
 using NEventStoreExample.ReadModel.EventHandler;
 
 namespace NEventStoreExample
@@ -58,7 +59,7 @@ namespace NEventStoreExample
                    .UsingJsonSerialization()
                    .Compress()
                    .UsingSynchronousDispatchScheduler()
-                   .DispatchTo(new DelegateMessageDispatcher(c => DelegateDispatcher.DispatchCommit(bus, c)))
+                   .DispatchTo(new DelegateMessageDispatcher(c => MassTransitDispatcher.DispatchCommit(bus, c)))
                    .Build();
     }
   }

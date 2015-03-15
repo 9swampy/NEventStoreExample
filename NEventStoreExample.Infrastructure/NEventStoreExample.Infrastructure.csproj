@@ -55,16 +55,22 @@
     <Compile Include="Bus\IEventPublisher.cs" />
     <Compile Include="Bus\InProcessBus.cs" />
     <Compile Include="Bus\ISubscriber.cs" />
+    <Compile Include="Bus\RegistrationBusBase.cs" />
     <Compile Include="Bus\SubscriptionDisposer.cs" />
+    <Compile Include="SnapshotCreator.cs" />
+    <Compile Include="IMementoCreator.cs" />
     <Compile Include="Command.cs" />
-    <Compile Include="DelegateDispatcher.cs" />
+    <Compile Include="DomainEvent.cs" />
     <Compile Include="EventualConsistency\MassTransitDispatcher.cs" />
     <Compile Include="EventualConsistency\PollingHook.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="ICommandHandler.cs" />
     <Compile Include="IDomainEvent.cs" />
     <Compile Include="IEventHandler.cs" />
+    <Compile Include="IEventsHandler.cs" />
+    <Compile Include="IEventStoreRepository.cs" />
     <Compile Include="IMessage.cs" />
+    <Compile Include="InMemoryDomainRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

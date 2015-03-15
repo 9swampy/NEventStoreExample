@@ -26,7 +26,7 @@ namespace NEventStoreExample.Domain.CommandHandler
 
     public void Handle(CloseAccountCommand command)
     {
-      var account = this.repository.GetById<Account>(command.AccountId);
+      var account = this.repository.GetById<Account>(command.AggregateID);
       account.Close();
       this.repository.Save(account, Guid.NewGuid());
     }

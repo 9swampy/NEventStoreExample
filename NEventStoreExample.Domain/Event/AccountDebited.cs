@@ -1,6 +1,7 @@
 namespace NEventStoreExample.Domain.Event
 {
   using System;
+  using NEventStoreExample.Infrastructure;
 
   public class AccountDebited : DomainEvent
   {

@@ -20,8 +20,8 @@ namespace NEventStoreExample.Domain.ProcessManager
       Task.Run(async () =>
       {
         await Task.Delay(e.Seconds * 1000);
-        
-        this.bus.Publish(new AlarmRaisedEvent(e.ID, e.Version + 1, e.CorrelationID, e.CausationID));
+
+        this.bus.Publish(new AlarmRaisedEvent(e.AggregateID, e.OriginalVersion + 1, e.CorrelationID, e.CausationID));
       });
     }
   }

@@ -1,24 +1,35 @@
-﻿using System;
-using System.Reflection;
-using CommonDomain;
-using CommonDomain.Persistence;
-
-namespace NEventStoreExample.Infrastructure
+﻿namespace NEventStoreExample.Infrastructure
 {
-  // By convention, I want to provide two means for creating domain objects. To the public, I want
-  // to provide an always-valid constructor. This explicitly shows what needs to be provided to the domain
-  // to create a valid instance of that object (eg, Person needs a twitter handle to be valid if I were doing twitter stream analysis)
-  // Internally, to EventStore, I want it to be able to create my object via a private ctor and I'm going to pass in the
-  // objects id.
-  // This method is pretty simplistic but my current domain suits it just fine.
+  using System;
+  using System.Reflection;
+  using CommonDomain;
+  using CommonDomain.Persistence;
+
   public class AggregateFactory : IConstructAggregates
   {
     public IAggregate Build(Type type, Guid id, IMemento snapshot)
     {
-      ConstructorInfo constructor = type.GetConstructor(
-        BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(Guid) }, null);
+      if (snapshot == null)
+      {
+        return BuildFromStart(type);
+      }
 
-      return constructor.Invoke(new object[] { id }) as IAggregate;
+      ConstructorInfo constructor = type.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { snapshot.GetType() }, null);
+      if (constructor == null)
+      {
+        throw new InvalidOperationException(string.Format("Aggregate {0} cannot be created: no non-public constructor that accepts IMemento has been provided", type.Name));
+      }
+      return constructor.Invoke(new object[] { snapshot }) as IAggregate;
+    }
+
+    private static IAggregate BuildFromStart(Type type)
+    {
+      ConstructorInfo constructor = type.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[0], null);
+      if (constructor == null)
+      {
+        throw new InvalidOperationException(string.Format("Aggregate {0} cannot be created: no parameterless non-public constructor has been provided", type.Name));
+      }
+      return constructor.Invoke(null) as IAggregate;
     }
   }
 }

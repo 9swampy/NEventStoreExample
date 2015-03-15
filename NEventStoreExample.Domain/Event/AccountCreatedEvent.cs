@@ -1,6 +1,7 @@
 ﻿namespace NEventStoreExample.Domain.Event
 {
   using System;
+  using NEventStoreExample.Infrastructure;
 
   // This is going to seem a bit conflated so bear with me. When we create a new Account,
   // we raise an AccountCreatedEvent. We then apply that AccountCreatedEvent to ourselves.

@@ -71,7 +71,7 @@ namespace NEventStoreExample
     public void Handle(AccountClosedEvent e)
     {
       AccountDto accountDto;
-      if (this.AccountDictionary.TryGetValue(e.ID, out accountDto))
+      if (this.AccountDictionary.TryGetValue(e.AggregateID, out accountDto))
       {
         accountDto.IsActive = false;
       }
@@ -79,7 +79,7 @@ namespace NEventStoreExample
 
     public void Handle(AccountCreatedEvent e)
     {
-      this.AccountDictionary.Add(e.ID, new AccountDto(e));
+      this.AccountDictionary.Add(e.AggregateID, new AccountDto(e));
     }
   }
 }

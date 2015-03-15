@@ -5,10 +5,10 @@ namespace NEventStoreExample.Infrastructure.Bus
 
   public class SubscriptionDisposer : IDisposable
   {
-    private readonly InProcessBus bus;
+    private readonly RegistrationBusBase bus;
     private IDictionary<Guid, Type> handlerList;
-    
-    public SubscriptionDisposer(InProcessBus bus)
+
+    public SubscriptionDisposer(RegistrationBusBase bus)
     {
       this.bus = bus;
     }

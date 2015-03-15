@@ -4,11 +4,11 @@
   {
     public AccountDto(NEventStoreExample.Domain.Event.AccountCreatedEvent e)
     {
-      this.ID = e.ID;
+      this.ID = e.AggregateID;
       this.IsActive = e.IsActive;
       this.Name = e.Name;
       this.Twitter = e.Twitter;
-      this.Version = e.Version;
+      this.Version = e.OriginalVersion;
     }
 
     public int Version { get; set; }

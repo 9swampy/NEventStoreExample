@@ -8,9 +8,6 @@
   {
     public CloseAccountCommand(Guid accountId, int originalVersion) : base(accountId, originalVersion)
     {
-      this.AccountId = accountId;
     }
-
-    public Guid AccountId { get; private set; }
   }
 }
