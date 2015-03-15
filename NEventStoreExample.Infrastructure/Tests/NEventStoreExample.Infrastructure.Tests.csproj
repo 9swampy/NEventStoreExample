@@ -68,7 +68,9 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AggregateFactoryTests.cs" />
+    <Compile Include="Bus\AsynchronousInProcessBusTests.cs" />
     <Compile Include="Bus\DelegateAdjusterTests.cs" />
+    <Compile Include="Bus\InProcessBusDisposalTests.cs" />
     <Compile Include="Bus\SynchronousInProcessBusTests.cs" />
     <Compile Include="DomainCommandTests.cs" />
     <Compile Include="EventualConsistency\EventualConsistencyTests.cs" />
@@ -89,7 +91,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NEventStoreExample.Infrastructure\NEventStoreExample.Infrastructure.csproj">
+    <ProjectReference Include="..\NEventStoreExample.Infrastructure.csproj">
       <Project>{f2c8dda3-c802-4159-8310-8dd090c09f8e}</Project>
       <Name>NEventStoreExample.Infrastructure</Name>
     </ProjectReference>
